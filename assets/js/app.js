@@ -32,7 +32,7 @@ function initMap(filterRange) {
 
       if (locations.length > 0) {
         let map = new google.maps.Map(document.getElementById('map'), {
-          zoom: 10,
+          zoom: 5,
           center: new google.maps.LatLng(locations[0].lat, locations[0].lng),
           mapTypeId: google.maps.MapTypeId.ROADMAP
         });
@@ -56,7 +56,7 @@ function initMap(filterRange) {
         }
       } else {
         let map = new google.maps.Map(document.getElementById('map'), {
-          zoom: 10,
+          zoom: 5,
           center: new google.maps.LatLng(34.052235, -118.243683),
           mapTypeId: google.maps.MapTypeId.ROADMAP
         });
