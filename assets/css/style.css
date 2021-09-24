@@ -1,0 +1,42 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: Verdana, sans-serif;
+}
+
+#loader {
+  position: fixed;
+  margin: 25% 47% !important;
+  z-index: 1;
+}
+
+#heading {
+  position: fixed;
+  margin: 10px;
+  z-index: 1;
+  padding: 10px 25px;
+  width: 25%;
+  background: #ffffff;
+}
+
+#filter {
+  position: fixed;
+  margin: 10px 75%;
+  z-index: 1;
+  padding: 10px 25px;
+  width: 20%;
+  background: #ffffff;
+}
+
+#alert {
+  position: fixed;
+  margin: 10px 75%;
+  z-index: 2;
+  width: 20%;
+}
+
+#map {
+  height: 100%;
+}
