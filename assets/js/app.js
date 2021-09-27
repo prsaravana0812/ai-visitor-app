@@ -1,6 +1,7 @@
 const spreadsheetId = "1WmrNUygSxeZfrAKSkef3azePBU7atepQFiNQ1zmUy0M";
 const APIKey = "AIzaSyCiYOzg7zMVusg6AD_Fbc50uW1XpAJSEbs";
 const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/?key=${APIKey}&includeGridData=true`;
+const labels = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 $(document).ready(function () {
   $("#heading, #filter, #alert").hide();
@@ -37,14 +38,20 @@ function initMap(filterRange) {
           mapTypeId: google.maps.MapTypeId.ROADMAP
         });
 
-        let infowindow = new google.maps.InfoWindow();
+        let infowindow = new google.maps.InfoWindow({ maxWidth: 400 });
         let marker, i;
+        let labelIndex = 0;
 
         for (i = 0; i < locations.length; i++) {
           marker = new google.maps.Marker({
             position: new google.maps.LatLng(locations[i].lat, locations[i].lng),
             map: map,
-            title: locations[i].name
+            title: locations[i].factoryName,
+            label: {
+              fillColor: "#0000ff",
+              text: labels[labelIndex++ % labels.length],
+              color: "#ffffff"
+            }
           });
 
           google.maps.event.addListener(marker, 'click', (function (marker, i) {
@@ -156,7 +163,16 @@ function checkDate(filterRange, vDate) {
 function getInfo(rowData) {
   let visitDate = new Date(rowData.date);
   let monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-  let dateString = `${visitDate.getDate()}, ${monthNames[visitDate.getMonth()]}`;
+  let dateString = `${visitDate.getDate()} ${monthNames[visitDate.getMonth()]} ${visitDate.getFullYear()}`;
+  let contentString = "";
+  let color = rowData.status == "Yet to visited" ? "red" : rowData.status == "In Progress" ? "orange" : "green";
 
-  return `${dateString} - ${rowData.whomVisited} visits ${rowData.name} founder of ${rowData.factoryName} and status is ${rowData.status} `;
+  contentString += `<p style="color: ${color}"><b>Status:</b> ${rowData.status}</p>`;
+  contentString += `<p><b>Visit Date:</b> ${dateString}</p>`;
+  contentString += `<p><b>Factory Name:</b> ${rowData.factoryName}</p>`;
+  contentString += `<p><b>Contact Person:</b> ${rowData.name}</p>`;
+  contentString += `<p><b>Who visited:</b> ${rowData.whomVisited}</p>`;
+  contentString += `<p><b>Comments:</b> ${rowData.comments}</p>`;
+
+  return `<div id="info">${contentString}</div>`;
 }

@@ -3,7 +3,7 @@ body {
   margin: 0;
   padding: 0;
   height: 100%;
-  font-family: Verdana, sans-serif;
+  font-family: system-ui;
 }
 
 #loader {
@@ -39,4 +39,12 @@ body {
 
 #map {
   height: 100%;
+}
+
+#info {
+  font-weight: 400;
+}
+
+b {
+  font-weight: 900;
 }
