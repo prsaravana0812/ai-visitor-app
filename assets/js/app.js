@@ -32,7 +32,7 @@ function initMap(filterRange) {
 
       if (locations.length > 0) {
         let map = new google.maps.Map(document.getElementById('map'), {
-          zoom: 5,
+          zoom: 7,
           center: new google.maps.LatLng(locations[0].lat, locations[0].lng),
           mapTypeId: google.maps.MapTypeId.ROADMAP
         });
@@ -57,7 +57,7 @@ function initMap(filterRange) {
       } else {
         let map = new google.maps.Map(document.getElementById('map'), {
           zoom: 5,
-          center: new google.maps.LatLng(34.052235, -118.243683),
+          center: new google.maps.LatLng(20.5937, 78.9629),
           mapTypeId: google.maps.MapTypeId.ROADMAP
         });
 
@@ -158,5 +158,5 @@ function getInfo(rowData) {
   let monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   let dateString = `${visitDate.getDate()}, ${monthNames[visitDate.getMonth()]}`;
 
-  return `${dateString} - ${rowData.factoryName} visit by ${rowData.whomVisited}`;
+  return `${dateString} - ${rowData.whomVisited} visits ${rowData.name} founder of ${rowData.factoryName} and status is ${rowData.status} `;
 }
