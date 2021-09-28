@@ -1,6 +1,7 @@
 const spreadsheetId = "1WmrNUygSxeZfrAKSkef3azePBU7atepQFiNQ1zmUy0M";
 const APIKey = "AIzaSyCiYOzg7zMVusg6AD_Fbc50uW1XpAJSEbs";
 const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/?key=${APIKey}&includeGridData=true`;
+const labels = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 $(document).ready(function () {
   $("#heading, #filter, #alert").hide();
@@ -39,6 +40,7 @@ function initMap(filterRange) {
 
         let infowindow = new google.maps.InfoWindow({ maxWidth: 400 });
         let marker, i;
+        let labelIndex = 0;
 
         for (i = 0; i < markers.length; i++) {
           let isSameMarker = checkMarker(markers, markers[i]);
@@ -57,6 +59,11 @@ function initMap(filterRange) {
             position: finalLatLng,
             map: map,
             title: markers[i].factoryName,
+            // label: {
+            //   text: labels[labelIndex++ % labels.length],
+            //   color: "#000000",
+            //   fontSize: "16px"
+            // },
             icon: {
               url: mapIcon
             }
