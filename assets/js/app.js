@@ -1,7 +1,6 @@
 const spreadsheetId = "1WmrNUygSxeZfrAKSkef3azePBU7atepQFiNQ1zmUy0M";
 const APIKey = "AIzaSyCiYOzg7zMVusg6AD_Fbc50uW1XpAJSEbs";
 const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/?key=${APIKey}&includeGridData=true`;
-const labels = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 $(document).ready(function () {
   $("#heading, #filter, #alert").hide();
@@ -25,38 +24,47 @@ $(document).ready(function () {
 
 function initMap(filterRange) {
   init(filterRange)
-    .then(function (locations) {
+    .then(function (markers) {
       $("#heading, #filter").show();
       $("#map").css('opacity', '1');
       $("#loader").hide();
       $("#view, #reload").prop('disabled', false);
 
-      if (locations.length > 0) {
+      if (markers.length > 0) {
         let map = new google.maps.Map(document.getElementById('map'), {
           zoom: 7,
-          center: new google.maps.LatLng(locations[0].lat, locations[0].lng),
+          center: new google.maps.LatLng(markers[0].lat, markers[0].lng),
           mapTypeId: google.maps.MapTypeId.ROADMAP
         });
 
         let infowindow = new google.maps.InfoWindow({ maxWidth: 400 });
         let marker, i;
-        let labelIndex = 0;
 
-        for (i = 0; i < locations.length; i++) {
+        for (i = 0; i < markers.length; i++) {
+          let isSameMarker = checkMarker(markers, markers[i]);
+          let finalLatLng = new google.maps.LatLng(markers[i].lat, markers[i].lng);
+          let color = markers[i].status == "Yet to visited" ? "red" : markers[i].status == "In Progress" ? "orange" : "green";
+          let mapIcon = `http://maps.google.com/mapfiles/ms/icons/${color}-dot.png`;
+
+          if (isSameMarker) {
+            let newLat = finalLatLng.lat() + ((Math.random() * 0.1)) / 1500;
+            let newLng = finalLatLng.lng() + ((Math.random() * 0.1)) / 1500;
+
+            finalLatLng = new google.maps.LatLng(newLat, newLng);
+          }
+
           marker = new google.maps.Marker({
-            position: new google.maps.LatLng(locations[i].lat, locations[i].lng),
+            position: finalLatLng,
             map: map,
-            title: locations[i].factoryName,
-            label: {
-              fillColor: "#0000ff",
-              text: labels[labelIndex++ % labels.length],
-              color: "#ffffff"
+            title: markers[i].factoryName,
+            icon: {
+              url: mapIcon
             }
           });
 
           google.maps.event.addListener(marker, 'click', (function (marker, i) {
             return function () {
-              infowindow.setContent(getInfo(locations[i]));
+              infowindow.setContent(getInfo(markers[i]));
               infowindow.open(map, marker);
             }
           })(marker, i));
@@ -101,25 +109,37 @@ function init(filterRange) {
   });
 }
 
-function filterData(locations, filterRange) {
-  if (locations[1].values[0].formattedValue) {
+function checkMarker(markers, currentMarker) {
+  let count = 0;
+
+  markers.map(function (marker) {
+    if (marker.lat == currentMarker.lat && marker.lng == marker.lng) {
+      count++;
+    }
+  });
+
+  return count > 1 ? true : false;
+}
+
+function filterData(markers, filterRange) {
+  if (markers[1].values[0].formattedValue) {
     let filteredLocationData = [];
 
-    for (i = 1; i < locations.length; i++) {
-      if (locations[i].values[0].formattedValue && checkDate(filterRange, locations[i].values[0].formattedValue)) {
+    markers.map(function (marker) {
+      if (marker.values[0].formattedValue && checkDate(filterRange, marker.values[0].formattedValue)) {
         filteredLocationData.push({
-          date: locations[i].values[0].formattedValue,
-          time: locations[i].values[1].formattedValue,
-          name: locations[i].values[2].formattedValue,
-          factoryName: locations[i].values[3].formattedValue,
-          lat: locations[i].values[4].formattedValue,
-          lng: locations[i].values[5].formattedValue,
-          whomVisited: locations[i].values[6].formattedValue,
-          status: locations[i].values[7].formattedValue,
-          comments: locations[i].values[8].formattedValue
+          date: marker.values[0].formattedValue,
+          time: marker.values[1].formattedValue,
+          name: marker.values[2].formattedValue,
+          factoryName: marker.values[3].formattedValue,
+          lat: marker.values[4].formattedValue,
+          lng: marker.values[5].formattedValue,
+          whomVisited: marker.values[6].formattedValue,
+          status: marker.values[7].formattedValue,
+          comments: marker.values[8].formattedValue
         });
       }
-    }
+    });
 
     return filteredLocationData;
   } else {
